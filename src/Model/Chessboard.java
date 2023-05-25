@@ -1,11 +1,35 @@
 package Model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This class store the real chess information.
  * The Chessboard has 9*7 cells, and each cell has a position for chess
  */
 public class Chessboard {
     private Cell[][] grid;
+    private final Set<ChessboardPoint> river = new HashSet<>();
+    public void initiateGridComponents() {
+
+        river.add(new ChessboardPoint(3, 1));
+        river.add(new ChessboardPoint(3, 2));
+        river.add(new ChessboardPoint(4, 1));
+        river.add(new ChessboardPoint(4, 2));
+        river.add(new ChessboardPoint(5, 1));
+        river.add(new ChessboardPoint(5, 2));
+
+        river.add(new ChessboardPoint(3, 4));
+        river.add(new ChessboardPoint(3, 5));
+        river.add(new ChessboardPoint(4, 4));
+        river.add(new ChessboardPoint(4, 5));
+        river.add(new ChessboardPoint(5, 4));
+        river.add(new ChessboardPoint(5, 5));
+        river.add(new ChessboardPoint(0,3));
+        river.add(new ChessboardPoint(8,3));
+    }
+
+
 
     public Chessboard() {
         this.grid =
@@ -13,6 +37,7 @@ public class Chessboard {
 
         initGrid();
         initPieces();
+        initiateGridComponents();
     }
 
     private void initGrid() {
@@ -87,9 +112,33 @@ public class Chessboard {
     }
 
     public boolean isValidMove(ChessboardPoint src, ChessboardPoint dest) {
-        if (getChessPieceAt(src) == null || getChessPieceAt(dest) != null) {
-            return false;
-        }else {if (calculateDistance(src, dest) != 1){return false;}else {return true;}}
+        int i=0;
+        for (ChessboardPoint a:river) {
+            if (a.getCol()==dest.getCol()&&a.getRow()==dest.getRow()){i=1;break;}
+        }
+        if (i==0) {
+            if (getChessPieceAt(src) == null || getChessPieceAt(dest) != null) {
+                return false;
+            } else {
+                if (calculateDistance(src, dest) != 1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }else {
+            if (dest.getRow() != 0 && dest.getCol() != 3 || dest.getRow() != 8 && dest.getCol() != 3) {
+                if (getChessPieceAt(src).getRank() == 1 && calculateDistance(src, dest) == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }else {if (dest.getRow() == 0 && dest.getCol() == 3 &&getChessPieceAt(src).getOwner()==PlayerColor.RED){
+                return false;
+            }else {if (dest.getRow() == 8 && dest.getCol() == 3 &&getChessPieceAt(src).getOwner()==PlayerColor.BLUE){
+                return false;
+            }else {return true;}}}
+        }
 
     }
 
