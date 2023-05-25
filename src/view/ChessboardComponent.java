@@ -22,6 +22,8 @@ public class ChessboardComponent extends JComponent {
     private final CellComponent[][] gridComponents = new CellComponent[CHESSBOARD_ROW_SIZE.getNum()][CHESSBOARD_COL_SIZE.getNum()];
     private final int CHESS_SIZE;
     private final Set<ChessboardPoint> riverCell = new HashSet<>();
+    private final Set<ChessboardPoint> trapCell = new HashSet<>();
+    private final Set<ChessboardPoint> denCell = new HashSet<>();
 
     private GameController gameController;
 
@@ -33,6 +35,9 @@ public class ChessboardComponent extends JComponent {
         setLayout(null); // Use absolute layout.
         setSize(width, height);
         System.out.printf("chessboard width, height = [%d : %d], chess size = %d\n", width, height, CHESS_SIZE);
+        paintden();
+        painttrap();
+
 
         initiateGridComponents();
     }
@@ -61,6 +66,20 @@ public class ChessboardComponent extends JComponent {
         }
 
     }
+    public void painttrap(){
+        trapCell.add(new ChessboardPoint(0,2));
+        trapCell.add(new ChessboardPoint(0,4));
+        trapCell.add(new ChessboardPoint(1,3));
+        trapCell.add(new ChessboardPoint(8,2));
+        trapCell.add(new ChessboardPoint(8,4));
+        trapCell.add(new ChessboardPoint(7,3));
+
+    }
+    public void paintden(){
+        denCell.add(new ChessboardPoint(0,3));
+        denCell.add(new ChessboardPoint(8,3));
+
+    }
 
     public void initiateGridComponents() {
 
@@ -86,8 +105,17 @@ public class ChessboardComponent extends JComponent {
                     cell = new CellComponent(Color.CYAN, calculatePoint(i, j), CHESS_SIZE);
                     this.add(cell);
                 } else {
-                    cell = new CellComponent(Color.LIGHT_GRAY, calculatePoint(i, j), CHESS_SIZE);
-                    this.add(cell);
+                    if (trapCell.contains(temp)) {
+                        cell = new CellComponent(Color.GREEN, calculatePoint(i, j), CHESS_SIZE);
+                        this.add(cell);
+                    }else {if (denCell.contains(temp)) {
+                        cell = new CellComponent(Color.YELLOW, calculatePoint(i, j), CHESS_SIZE);
+                        this.add(cell);
+                    }else{
+                        cell = new CellComponent(Color.LIGHT_GRAY, calculatePoint(i, j), CHESS_SIZE);
+                        this.add(cell);}
+
+                    }
                 }
                 gridComponents[i][j] = cell;
             }
